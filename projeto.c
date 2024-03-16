@@ -14,7 +14,7 @@
 *   Estruturas
 */
 typedef struct {
-    char nome[100];
+    char *nome;
     int capMaxima;
     float val15, val15a1h, valMaxDia;
 } Parque;
@@ -24,8 +24,9 @@ typedef struct {
 *   Prototipo das funcoes
 */
 void formataString(char *str);
-int processaInput(char *frase, char *nome, int *capMaxima, float *val15,
-                  float *val15a1h, float *valMaxDia);
+int processaInput(char *frase, Parque *parque);
+void listaParques(Parque parques[], int nParques);
+char saoIguais(const char *str1, const char *str2, int tamanho1, int tamanho2);
 
 
 int main(void) {
@@ -45,12 +46,8 @@ int main(void) {
 				break;
 
             case 'p':
-                // p [ <nome-parque> <capacidade> <valor-15> <valor-15-apos-1hora> <valor-max-diario> ]
-                // p "CC Colombo" 400 0.25 0.40 20.00
-
                 if (strlen(resposta) == 1) {
-                    // Listar todos os parques existentes no sistema
-                    printf("Listei!\n");
+                    listaParques(parques, nParques);
                     break;
                 }
 
@@ -60,26 +57,24 @@ int main(void) {
                 }
 
                 Parque novoParque;
-                if (processaInput(resposta + 2, novoParque.nome, 
-                    &novoParque.capMaxima,
-                    &novoParque.val15, &novoParque.val15a1h,
-                    &novoParque.valMaxDia) != 5) {
+                if (processaInput(resposta + 2, &novoParque) != 5) {
                     printf("Erro ao ler os valores.\n");
                     break;
                 }
 
                 if (nParques != 0) {
-                    char erro = 0;
+                    int tamanho = strlen(novoParque.nome);
+                    char parqueExiste = 0;
                     for (int i = 0; i <= nParques; i++) {
-                        if (strcmp(parques[i].nome, novoParque.nome) != 0) {
-                            erro = 1;
+                        if (saoIguais(parques[i].nome, novoParque.nome, 
+                            tamanho, strlen(parques[i].nome))) {
+                            printf("Parque ja existe.\n");
+                            parqueExiste = 1;
                             break;
                         }
                     }
-                    if (erro) {
-                        printf("<nome-parque>: parking already exists.\n");
+                    if (parqueExiste)
                         break;
-                    }
                 }
                 
                 if (novoParque.capMaxima <= 0) {
@@ -132,9 +127,10 @@ void formataString(char *str) {
 }
 
 
-int processaInput(char *frase, char *nome, int *capMaxima, float *val15,
-                  float *val15a1h, float *valMaxDia) {
+int processaInput(char *frase, Parque *parque) {
     char aspas = 0;
+    char temp[50];
+    int resultado;
     for (int i = 0; frase[i] != '\0'; i++) {
         if (frase[i] == '"') {
             aspas = 1;
@@ -143,10 +139,40 @@ int processaInput(char *frase, char *nome, int *capMaxima, float *val15,
     }
 
     if (aspas) {
-        return sscanf(frase, "\"%99[^\"]\" %d %f %f %f",nome, capMaxima,
-                      val15, val15a1h, valMaxDia);
+        resultado = sscanf(frase, "\"%49[^\"]\" %d %f %f %f",temp, 
+                           &parque->capMaxima,&parque->val15, 
+                           &parque->val15a1h, &parque->valMaxDia);
     } else {
-        return sscanf(frase, "%99[^ ] %d %f %f %f", nome, capMaxima,
-                      val15, val15a1h, valMaxDia);
+        resultado = sscanf(frase, "%49[^ ] %d %f %f %f", temp, 
+                           &parque->capMaxima, &parque->val15, 
+                           &parque->val15a1h, &parque->valMaxDia);
     }
+    formataString(temp);
+    parque->nome = malloc((strlen(temp) + 1) * sizeof(char));
+    strcpy(parque->nome, temp);
+    return resultado;
+}
+
+
+void listaParques(Parque parques[], int nParques) {
+    for (int i = 0; i < nParques; i++) {
+        printf("%s %d %.2f %.2f %.2f\n", parques[i].nome, parques[i].capMaxima,
+               parques[i].val15, parques[i].val15a1h, parques[i].valMaxDia);
+    }
+}
+
+
+char saoIguais(const char *str1, const char *str2, int tamanho1, int tamanho2) {
+    // Se os tamanhos forem diferentes, elas não podem ser iguais
+    if (tamanho1 != tamanho2) {
+        return 0;
+    }
+
+    // Comparando os caracteres
+    for (int i = 0; i < tamanho1; i++) {
+        if (str1[i] != str2[i]) {
+            return 0;
+        }
+    }
+    return 1;
 }
