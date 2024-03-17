@@ -15,9 +15,17 @@
 */
 typedef struct {
     char *nome;
-    int capMaxima;
+    int capMaxima, lugaresDisp;
     float val15, val15a1h, valMaxDia;
 } Parque;
+
+
+typedef struct {
+    char *matricula;
+    int horaEntrada, minutoEntrada;
+    int horaSaida, minutoSaida;
+    float custo;
+} Carro;
 
 
 /*
@@ -27,7 +35,8 @@ void formataString(char *str);
 int processaInput(char *frase, Parque *parque);
 void listaParques(Parque parques[], int nParques);
 char saoIguais(const char *str1, const char *str2, int tamanho1, int tamanho2);
-
+char custoInvalido(Parque *parque);
+char parqueExiste(Parque parques[], int nParques,char *nome);
 
 int main(void) {
 	char resposta[BUFSIZ], continua = 1;
@@ -63,18 +72,10 @@ int main(void) {
                 }
 
                 if (nParques != 0) {
-                    int tamanho = strlen(novoParque.nome);
-                    char parqueExiste = 0;
-                    for (int i = 0; i <= nParques; i++) {
-                        if (saoIguais(parques[i].nome, novoParque.nome, 
-                            tamanho, strlen(parques[i].nome))) {
-                            printf("Parque ja existe.\n");
-                            parqueExiste = 1;
-                            break;
-                        }
-                    }
-                    if (parqueExiste)
+                    if (parqueExiste(parques, nParques, novoParque.nome)) {
+                        printf("Parque ja existe.\n");
                         break;
+                    }
                 }
                 
                 if (novoParque.capMaxima <= 0) {
@@ -82,21 +83,23 @@ int main(void) {
                     break;
                 }
 
-                if (novoParque.val15 < 0 || novoParque.val15a1h < 0 ||
-                    novoParque.valMaxDia < 0 ||
-                    !((novoParque.val15 < novoParque.val15a1h) &&
-                    (novoParque.val15a1h < novoParque.valMaxDia))) {
+                if (custoInvalido(&novoParque)) {
                     printf("invalid cost.\n");
                     break;
                 }
 
                 parques[nParques] = novoParque;
                 printf("Parque criado com sucesso!!\n");
+                novoParque.lugaresDisp = novoParque.capMaxima;
                 nParques++;
                 break;
             
             case 'e':
 
+                break;
+
+            default:
+                printf("Comando invalido.\n");
                 break;
 		}
 	}
@@ -123,7 +126,9 @@ void formataString(char *str) {
     }
 
     // Adiciona null terminator
-    str[--j] = '\0';
+    if (str[j - 1] == ' ' || str[j - 1] == '\n' || str[j - 1] == '\r')
+        j--;
+    str[j] = '\0';
 }
 
 
@@ -176,3 +181,22 @@ char saoIguais(const char *str1, const char *str2, int tamanho1, int tamanho2) {
     }
     return 1;
 }
+
+
+char custoInvalido(Parque *parque) {
+    return (parque->val15 < 0 || parque->val15a1h < 0 || 
+            parque->valMaxDia < 0 ||
+            !((parque->val15 < parque->val15a1h) &&
+            (parque->val15a1h < parque->valMaxDia)));
+}
+
+
+char parqueExiste(Parque parques[], int nParques, char *nome) {
+    int tamanho = strlen(nome);
+    for (int i = 0; i < nParques; i++) {
+        if (saoIguais(parques[i].nome, nome, tamanho, strlen(parques[i].nome)))
+            return 1;
+    }
+    return 0;
+}
+
