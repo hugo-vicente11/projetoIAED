@@ -124,8 +124,8 @@ int processaInput(char *frase, Parque *parque) {
 
 void listaParques(Parque parques[], int nParques) {
     for (int i = 0; i < nParques; i++) {
-        printf("%s %d %.2f %.2f %.2f\n", parques[i].nome, parques[i].capMaxima,
-               parques[i].val15, parques[i].val15a1h, parques[i].valMaxDia);
+        printf("%s %d %d\n", parques[i].nome, parques[i].capMaxima,
+               parques[i].lugaresDisp);
     }
 }
 
@@ -198,9 +198,9 @@ void iniciaP(char *resposta, Parque parques[], int *nParques) {
         return;
     }
 
+    novoParque.lugaresDisp = novoParque.capMaxima;
     parques[*nParques] = novoParque;
     printf("Parque criado com sucesso!!\n");
-    novoParque.lugaresDisp = novoParque.capMaxima;
     (*nParques)++;
     return;
 }
