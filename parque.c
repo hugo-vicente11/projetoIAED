@@ -48,13 +48,13 @@ void iniciaP(char *resposta, Parque parques[], int *nParques) {
 
     if (*nParques != 0) {
         if (parqueExiste(parques, *nParques, novoParque.nome)) {
-            printf("Parque ja existe.\n");
+            printf("%s: parking already exists.\n",novoParque.nome);
             return;
         }
     }
     
     if (novoParque.capMaxima <= 0) {
-        printf("<capacidade>: invalid capacity.\n");
+        printf("%d: invalid capacity.\n", novoParque.capMaxima);
         return;
     }
 
@@ -65,7 +65,6 @@ void iniciaP(char *resposta, Parque parques[], int *nParques) {
 
     novoParque.lugaresDisp = novoParque.capMaxima;
     parques[*nParques] = novoParque;
-    printf("Parque criado com sucesso!!\n");
     (*nParques)++;
     return;
 }

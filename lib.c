@@ -26,7 +26,7 @@ void formataString(char *str) {
 
 int processaInput(char *frase, Parque *parque) {
     char aspas = 0;
-    char temp[50];
+    char temp[BUFSIZ];
     int resultado;
     for (int i = 0; frase[i] != '\0'; i++) {
         if (frase[i] == '"') {
@@ -36,11 +36,11 @@ int processaInput(char *frase, Parque *parque) {
     }
 
     if (aspas) {
-        resultado = sscanf(frase, "\"%49[^\"]\" %d %f %f %f",temp, 
+        resultado = sscanf(frase, "\"%8191[^\"]\" %d %f %f %f",temp, 
                            &parque->capMaxima,&parque->val15, 
                            &parque->val15a1h, &parque->valMaxDia);
     } else {
-        resultado = sscanf(frase, "%49[^ ] %d %f %f %f", temp, 
+        resultado = sscanf(frase, "%8191[^ ] %d %f %f %f", temp, 
                            &parque->capMaxima, &parque->val15, 
                            &parque->val15a1h, &parque->valMaxDia);
     }
