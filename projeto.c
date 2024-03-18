@@ -37,6 +37,8 @@ void listaParques(Parque parques[], int nParques);
 char saoIguais(const char *str1, const char *str2, int tamanho1, int tamanho2);
 char custoInvalido(Parque *parque);
 char parqueExiste(Parque parques[], int nParques,char *nome);
+void iniciaP(char *resposta, Parque parques[], int *nParques);
+
 
 int main(void) {
 	char resposta[BUFSIZ], continua = 1;
@@ -45,9 +47,7 @@ int main(void) {
 	while (continua) {
 		fgets(resposta, BUFSIZ, stdin);
 		formataString(resposta);
-		
         char primeiroChar = resposta[0];
-
 		switch (primeiroChar) {
 			case 'q':
 				// Meter os frees aqui
@@ -55,45 +55,9 @@ int main(void) {
 				break;
 
             case 'p':
-                if (strlen(resposta) == 1) {
-                    listaParques(parques, nParques);
-                    break;
-                }
-
-                if (nParques >= MAX) {
-                    printf("too many parks.\n");
-                    break;
-                }
-
-                Parque novoParque;
-                if (processaInput(resposta + 2, &novoParque) != 5) {
-                    printf("Erro ao ler os valores.\n");
-                    break;
-                }
-
-                if (nParques != 0) {
-                    if (parqueExiste(parques, nParques, novoParque.nome)) {
-                        printf("Parque ja existe.\n");
-                        break;
-                    }
-                }
-                
-                if (novoParque.capMaxima <= 0) {
-                    printf("<capacidade>: invalid capacity.\n");
-                    break;
-                }
-
-                if (custoInvalido(&novoParque)) {
-                    printf("invalid cost.\n");
-                    break;
-                }
-
-                parques[nParques] = novoParque;
-                printf("Parque criado com sucesso!!\n");
-                novoParque.lugaresDisp = novoParque.capMaxima;
-                nParques++;
+                iniciaP(resposta, parques, &nParques);
                 break;
-            
+
             case 'e':
 
                 break;
@@ -103,7 +67,6 @@ int main(void) {
                 break;
 		}
 	}
-
 	return 0;
 }
 
@@ -200,3 +163,44 @@ char parqueExiste(Parque parques[], int nParques, char *nome) {
     return 0;
 }
 
+
+void iniciaP(char *resposta, Parque parques[], int *nParques) {
+    if (strlen(resposta) == 1) {
+        listaParques(parques, *nParques);
+        return;
+    }
+
+    if (*nParques >= MAX) {
+        printf("too many parks.\n");
+        return;
+    }
+
+    Parque novoParque;
+    if (processaInput(resposta + 2, &novoParque) != 5) {
+        printf("Erro ao ler os valores.\n");
+        return;
+    }
+
+    if (*nParques != 0) {
+        if (parqueExiste(parques, *nParques, novoParque.nome)) {
+            printf("Parque ja existe.\n");
+            return;
+        }
+    }
+    
+    if (novoParque.capMaxima <= 0) {
+        printf("<capacidade>: invalid capacity.\n");
+        return;
+    }
+
+    if (custoInvalido(&novoParque)) {
+        printf("invalid cost.\n");
+        return;
+    }
+
+    parques[*nParques] = novoParque;
+    printf("Parque criado com sucesso!!\n");
+    novoParque.lugaresDisp = novoParque.capMaxima;
+    (*nParques)++;
+    return;
+}
