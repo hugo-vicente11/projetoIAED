@@ -4,27 +4,14 @@
 #include <string.h>
 #include "parque.h"
 #include "lib.h"
-
-
-typedef struct {
-    char *matricula;
-    int horaEntrada, minutoEntrada;
-    int horaSaida, minutoSaida;
-    float custo;
-} Carro;
-
-
-/*
-*   Prototipo das funcoes
-*/
-
-void iniciaE(char *resposta, Parque parques[], int *lugaresDisp);
+#include "carros.h"
 
 
 int main(void) {
 	char resposta[BUFSIZ], continua = 1;
-    int nParques = 0; // Numero de parques de estacionamento
-    Parque parques[MAX];
+    parkList parques;
+    parques.head = NULL;
+    parques.tamanho = 0;
 	while (continua) {
 		fgets(resposta, BUFSIZ, stdin);
 		formataString(resposta);
@@ -36,11 +23,10 @@ int main(void) {
 				break;
 
             case 'p':
-                iniciaP(resposta, parques, &nParques);
+                iniciaP(resposta, &parques);
                 break;
 
             case 'e':
-
                 break;
 
             default:

@@ -1,14 +1,8 @@
 #include "parque.h"
 #include "lib.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-
-void listaParques(Parque parques[], int nParques) {
-    for (int i = 0; i < nParques; i++) {
-        printf("%s %d %d\n", parques[i].nome, parques[i].capMaxima,
-               parques[i].lugaresDisp);
-    }
-}
 
 
 char custoInvalido(Parque *parque) {
@@ -19,23 +13,28 @@ char custoInvalido(Parque *parque) {
 }
 
 
-char parqueExiste(Parque parques[], int nParques, char *nome) {
+char parqueExiste(parkList parques, char *nome) {
     int tamanho = strlen(nome);
-    for (int i = 0; i < nParques; i++) {
-        if (saoIguais(parques[i].nome, nome, tamanho, strlen(parques[i].nome)))
+    parkNode *atual = parques.head;
+    while (atual != NULL) {
+        if (saoIguais(atual->parque.nome, nome, tamanho, 
+            strlen(atual->parque.nome)))
+        {
             return 1;
+        }
+        atual = atual->next;
     }
     return 0;
 }
 
 
-void iniciaP(char *resposta, Parque parques[], int *nParques) {
+void iniciaP(char *resposta, parkList *parques) {
     if (strlen(resposta) == 1) {
-        listaParques(parques, *nParques);
+        listaParques(*parques);
         return;
     }
 
-    if (*nParques >= MAX) {
+    if (parques->tamanho >= MAX) {
         printf("too many parks.\n");
         return;
     }
@@ -46,8 +45,8 @@ void iniciaP(char *resposta, Parque parques[], int *nParques) {
         return;
     }
 
-    if (*nParques != 0) {
-        if (parqueExiste(parques, *nParques, novoParque.nome)) {
+    if (parques->tamanho != 0) {
+        if (parqueExiste(*parques, novoParque.nome)) {
             printf("%s: parking already exists.\n",novoParque.nome);
             return;
         }
@@ -64,7 +63,69 @@ void iniciaP(char *resposta, Parque parques[], int *nParques) {
     }
 
     novoParque.lugaresDisp = novoParque.capMaxima;
-    parques[*nParques] = novoParque;
-    (*nParques)++;
+    adicionaParkNode(parques, &novoParque);
+    parques->tamanho++;
+    return;
+}
+
+
+void adicionaParkNode(parkList *parques, Parque *parque) {
+    parkNode *novo = malloc(sizeof(parkNode));
+    novo->parque = *parque;
+    novo->next = NULL;
+    if (parques->head == NULL) {
+        parques->head = novo;
+    } else {
+        parkNode *atual = parques->head;
+        while (atual->next != NULL) {
+            atual = atual->next;
+        }
+        atual->next = novo;
+    }
+    return;
+}
+
+
+void removeParkNode(parkList *parques, char *nome) {
+    int tamanho = strlen(nome);
+    if (parques->head == NULL) {
+        return;
+    }
+
+    if (parques->tamanho == 0) {
+        return;
+    }
+
+    parkNode *atual = parques->head;
+    parkNode *anterior = NULL;
+    while (atual != NULL) {
+        if (saoIguais(atual->parque.nome, nome, tamanho, strlen(atual->parque.nome))) {
+            if (anterior == NULL) {
+                parques->head = atual->next;
+            } else {
+                anterior->next = atual->next;
+            }
+            free(atual->parque.nome);
+            free(atual);
+            return;
+        }
+        anterior = atual;
+        atual = atual->next;
+    }
+    return;
+}
+
+
+void listaParques(parkList parques) {
+    if (parques.tamanho == 0) {
+        printf("No parking lots.\n");
+        return;
+    }
+
+    parkNode *atual = parques.head;
+    while (atual != NULL) {
+        printf("%s %d %d\n", atual->parque.nome, atual->parque.capMaxima,
+               atual->parque.lugaresDisp);
+    }
     return;
 }

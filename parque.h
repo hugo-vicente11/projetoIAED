@@ -9,12 +9,26 @@ typedef struct {
 } Parque;
 
 
+typedef struct parkNode{
+    Parque parque;
+    struct parkNode *next;
+} parkNode;
+
+typedef struct {
+    parkNode *head;
+    int tamanho;
+} parkList;
+
+
 #define MAX 20 // Maximo de parques de estacionamento
 
-void listaParques(Parque parques[], int nParques);
+
 char custoInvalido(Parque *parque);
-char parqueExiste(Parque parques[], int nParques,char *nome);
-void iniciaP(char *resposta, Parque parques[], int *nParques);
+void iniciaP(char *resposta, parkList *parques);
+void adicionaParkNode(parkList *parques, Parque *parque);
+void removeParkNode(parkList *parques, char *nome);
+void listaParques(parkList parques);
+char parqueExiste(parkList parques, char *nome);
 
 
 #endif
