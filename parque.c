@@ -126,6 +126,7 @@ void listaParques(parkList parques) {
     while (atual != NULL) {
         printf("%s %d %d\n", atual->parque.nome, atual->parque.capMaxima,
                atual->parque.lugaresDisp);
+        atual = atual->next;
     }
     return;
 }
