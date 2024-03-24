@@ -1,4 +1,5 @@
 #include "parque.h"
+#include "lib.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -24,34 +25,13 @@ void formataString(char *str) {
 }
 
 
-int processaInput(char *frase, Parque *parque) {
-    char aspas = 0;
-    char temp[BUFSIZ];
-    int resultado;
+char temAspas(char *frase) {
     for (int i = 0; frase[i] != '\0'; i++) {
-        if (frase[i] == '"') {
-            aspas = 1;
-            break;
-        }
+        if (frase[i] == '"')
+            return 1;
     }
-
-    if (aspas) {
-        resultado = sscanf(frase, "\"%8191[^\"]\" %d %f %f %f",temp, 
-                           &parque->capMaxima,&parque->val15, 
-                           &parque->val15a1h, &parque->valMaxDia);
-    } else {
-        resultado = sscanf(frase, "%8191[^ ] %d %f %f %f", temp, 
-                           &parque->capMaxima, &parque->val15, 
-                           &parque->val15a1h, &parque->valMaxDia);
-    }
-    formataString(temp);
-    parque->nome = malloc((strlen(temp) + 1) * sizeof(char));
-    strcpy(parque->nome, temp);
-    return resultado;
+    return 0;
 }
-
-
-
 
 
 char saoIguais(const char *str1, const char *str2, int tamanho1, int tamanho2) {

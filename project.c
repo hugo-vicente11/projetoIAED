@@ -9,6 +9,8 @@
 
 int main(void) {
 	char resposta[BUFSIZ], continua = 1;
+    char dataAnt[11] = "00-00-0000";
+    char horaAnt[6] = "00:00";
     parkList parques;
     parques.head = NULL;
     parques.tamanho = 0;
@@ -27,10 +29,7 @@ int main(void) {
                 break;
 
             case 'e':
-                break;
-
-            default:
-                printf("Comando invalido.\n");
+                iniciaE(resposta, &parques, dataAnt, horaAnt);
                 break;
 		}
 	}

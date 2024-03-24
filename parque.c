@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "structs.h"
 
 char custoInvalido(Parque *parque) {
     return (parque->val15 < 0 || parque->val15a1h < 0 || 
@@ -40,7 +40,7 @@ void iniciaP(char *resposta, parkList *parques) {
     }
 
     Parque novoParque;
-    if (processaInput(resposta + 2, &novoParque) != 5) {
+    if (processaInputP(resposta + 2, &novoParque) != 5) {
         printf("Erro ao ler os valores.\n");
         return;
     }
@@ -64,7 +64,6 @@ void iniciaP(char *resposta, parkList *parques) {
 
     novoParque.lugaresDisp = novoParque.capMaxima;
     adicionaParkNode(parques, &novoParque);
-    parques->tamanho++;
     return;
 }
 
@@ -82,7 +81,43 @@ void adicionaParkNode(parkList *parques, Parque *parque) {
         }
         atual->next = novo;
     }
+    parques->tamanho++;
     return;
+}
+
+
+parkNode *obterParkNode(parkList parques, char *nome) {
+    int tamanho = strlen(nome);
+    parkNode *atual = parques.head;
+    while (atual != NULL) {
+        if (saoIguais(atual->parque.nome, nome, tamanho, 
+            strlen(atual->parque.nome)))
+        {
+            return atual;
+        }
+        atual = atual->next;
+    }
+    return NULL;
+}
+
+
+int processaInputP(char *frase, Parque *parque) {
+    char temp[BUFSIZ];
+    int resultado;
+
+    if (temAspas(frase)) {
+        resultado = sscanf(frase, "\"%8191[^\"]\" %d %f %f %f",temp, 
+                           &parque->capMaxima,&parque->val15, 
+                           &parque->val15a1h, &parque->valMaxDia);
+    } else {
+        resultado = sscanf(frase, "%8191[^ ] %d %f %f %f", temp, 
+                           &parque->capMaxima, &parque->val15, 
+                           &parque->val15a1h, &parque->valMaxDia);
+    }
+    formataString(temp);
+    parque->nome = malloc((strlen(temp) + 1) * sizeof(char));
+    strcpy(parque->nome, temp);
+    return resultado;
 }
 
 
