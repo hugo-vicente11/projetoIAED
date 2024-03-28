@@ -16,7 +16,6 @@ int main(void) {
     parques.tamanho = 0;
 	while (continua) {
 		fgets(resposta, BUFSIZ, stdin);
-		formataString(resposta);
         char primeiroChar = resposta[0];
 		switch (primeiroChar) {
 			case 'q':
@@ -30,6 +29,10 @@ int main(void) {
 
             case 'e':
                 iniciaE(resposta, &parques, dataAnt, horaAnt);
+                break;
+            
+            case 's':
+                iniciaS(resposta, &parques, dataAnt, horaAnt);
                 break;
 		}
 	}

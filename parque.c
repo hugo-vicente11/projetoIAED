@@ -29,7 +29,7 @@ char parqueExiste(parkList parques, char *nome) {
 
 
 void iniciaP(char *resposta, parkList *parques) {
-    if (strlen(resposta) == 1) {
+    if (strlen(resposta) <= 2) {
         listaParques(*parques);
         return;
     }
@@ -40,11 +40,7 @@ void iniciaP(char *resposta, parkList *parques) {
     }
 
     Parque novoParque;
-    if (processaInputP(resposta + 2, &novoParque) != 5) {
-        printf("Erro ao ler os valores.\n");
-        return;
-    }
-
+    processaInputP(resposta, &novoParque);
     if (parques->tamanho != 0) {
         if (parqueExiste(*parques, novoParque.nome)) {
             printf("%s: parking already exists.\n",novoParque.nome);
@@ -101,23 +97,21 @@ parkNode *obterParkNode(parkList parques, char *nome) {
 }
 
 
-int processaInputP(char *frase, Parque *parque) {
+void processaInputP(char *frase, Parque *parque) {
     char temp[BUFSIZ];
-    int resultado;
 
     if (temAspas(frase)) {
-        resultado = sscanf(frase, "\"%8191[^\"]\" %d %f %f %f",temp, 
+        sscanf(frase, "p \"%8191[^\"]\" %d %f %f %f",temp, 
                            &parque->capMaxima,&parque->val15, 
                            &parque->val15a1h, &parque->valMaxDia);
     } else {
-        resultado = sscanf(frase, "%8191[^ ] %d %f %f %f", temp, 
+        sscanf(frase, "p %8191[^ ] %d %f %f %f", temp, 
                            &parque->capMaxima, &parque->val15, 
                            &parque->val15a1h, &parque->valMaxDia);
     }
-    formataString(temp);
     parque->nome = malloc((strlen(temp) + 1) * sizeof(char));
     strcpy(parque->nome, temp);
-    return resultado;
+    return;
 }
 
 

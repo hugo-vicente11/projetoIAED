@@ -2,7 +2,7 @@
 #define PARQUE_H
 #include "structs.h"
 
-int processaInputP(char *frase, Parque *parque);
+void processaInputP(char *frase, Parque *parque);
 char custoInvalido(Parque *parque);
 void iniciaP(char *resposta, parkList *parques);
 void adicionaParkNode(parkList *parques, Parque *parque);

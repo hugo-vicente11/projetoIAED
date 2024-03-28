@@ -8,17 +8,30 @@
 
 
 char * processaInputE(char *frase, char matricula[TAMMATRICULA+1],
-				   char data[11], char hora[6]) {
-	// Passar a frase como frase+2 na function call!!!
+				   char data[TAMDATA+1], char hora[TAMHORA+1]) {
     char temp[BUFSIZ];
 
     if (temAspas(frase)) {
-        sscanf(frase, "\"%8191[^\"]\" %8s %s %s", temp, matricula, data, hora);
+        sscanf(frase, "e \"%8191[^\"]\" %8s %s %s", temp, matricula, data, hora);
     } else {
-        sscanf(frase, "%8191[^ ] %8s %s %s", temp, matricula, data, hora);
+        sscanf(frase, "e %8191[^ ] %8s %s %s", temp, matricula, data, hora);
     }
-    formataString(temp);
-    char *nome = malloc((strlen(temp) + 1) * sizeof(char));
+    char *nome = (char*)malloc((strlen(temp) + 1) * sizeof(char));
+    strcpy(nome, temp);
+    return nome;
+}
+
+
+char * processaInputS(char *frase, char matricula[TAMMATRICULA+1],
+				   char data[TAMDATA+1], char hora[TAMHORA+1]) {
+    char temp[BUFSIZ];
+
+    if (temAspas(frase)) {
+        sscanf(frase, "s \"%8191[^\"]\" %8s %s %s", temp, matricula, data, hora);
+    } else {
+        sscanf(frase, "s %8191[^ ] %8s %s %s", temp, matricula, data, hora);
+    }
+    char *nome = (char*)malloc((strlen(temp) + 1) * sizeof(char));
     strcpy(nome, temp);
     return nome;
 }
@@ -111,8 +124,8 @@ char horaValida(int hora, int minuto) {
 }
 
 
-char dataAnterior(char dataAnt[11], char horaAnt[6], char data[11],
-				  char hora[6]) {
+char dataAnterior(char dataAnt[TAMDATA+1], char horaAnt[TAMHORA+1],
+				  char data[TAMDATA+1], char hora[TAMHORA+1]) {
 	int diaAnt, mesAnt, anoAnt, horaIntAnt, minutoIntAnt;
 	int dia, mes, ano, horaInt, minutoInt;
 	converteData(dataAnt, &diaAnt, &mesAnt, &anoAnt);
@@ -143,12 +156,11 @@ char dataAnterior(char dataAnt[11], char horaAnt[6], char data[11],
 
 // Adiciona CarroNode a CarroList de um parque
 void adicionaCarro(Parque *parque, char matricula[TAMMATRICULA+1], 
-				   char data[11], char hora[6]) {
-	CarroNode *novoCarro = malloc(sizeof(CarroNode));
+				   char data[TAMDATA+1], char hora[TAMHORA+1]) {
+	CarroNode *novoCarro = (CarroNode*)malloc(sizeof(CarroNode));
 	strcpy(novoCarro->carro.matricula, matricula);
 	strcpy(novoCarro->carro.dataEntrada, data);
 	strcpy(novoCarro->carro.horaEntrada, hora);
-	novoCarro->carro.custo = 0;
 	novoCarro->next = parque->carros.head;
 	parque->carros.head = novoCarro;
 	parque->carros.tamanho++;
@@ -156,8 +168,32 @@ void adicionaCarro(Parque *parque, char matricula[TAMMATRICULA+1],
 	return;
 }
 
+void removeCarro(Parque *parque, char matricula[TAMMATRICULA+1]) {
+	CarroNode *atual = parque->carros.head;
+	CarroNode *anterior = NULL;
+	while (atual != NULL) {
+		if (saoIguais(atual->carro.matricula, matricula, 
+					   TAMMATRICULA, TAMMATRICULA)) {
+			if (anterior == NULL) {
+				parque->carros.head = atual->next;
+			} else {
+				anterior->next = atual->next;
+			}
+			// printf("%s ", atual->carro.matricula);
+			free(atual);
+			parque->carros.tamanho--;
+			parque->lugaresDisp++;
+			return;
+		}
+		anterior = atual;
+		atual = atual->next;
+	}
+	return;
+}
+
+
 // Funcao que verifica se um carro com a matricula inserida ja existe em um parque
-char carroExiste(parkList parques, char matricula[TAMMATRICULA+1]) {
+CarroNode * obtemCarro(parkList parques, char matricula[TAMMATRICULA+1]) {
 	parkNode *atual = parques.head;
 	while (atual != NULL) {
 		CarroNode *atualCarro = atual->parque.carros.head;
@@ -165,22 +201,22 @@ char carroExiste(parkList parques, char matricula[TAMMATRICULA+1]) {
 			if (saoIguais(atualCarro->carro.matricula, matricula, 
 						   strlen(atualCarro->carro.matricula), 
 						   TAMMATRICULA))
-				return 1;
+				return atualCarro;
 			atualCarro = atualCarro->next;
 		}
 		atual = atual->next;
 	}
-	return 0;
+	return NULL;
 }
 
 
-void iniciaE(char *resposta, parkList *parques, char dataAnt[11], 
-			 char horaAnt[6]) {
-	char matricula[TAMMATRICULA+1], data[11], hora[6];
+void iniciaE(char *resposta, parkList *parques, char dataAnt[TAMDATA+1], 
+			 char horaAnt[TAMHORA+1]) {
+	char matricula[TAMMATRICULA+1], data[TAMDATA+1], hora[TAMHORA+1];
 	int dia, mes, ano;
 	int horaInt, minutoInt;
-	parkNode *parkEscolhido = malloc(sizeof(parkNode));
-	char *nome = processaInputE(resposta + 2, matricula, data, hora);
+	parkNode *parkEscolhido = (parkNode*)malloc(sizeof(parkNode));
+	char *nome = processaInputE(resposta, matricula, data, hora);
 	parkEscolhido = obterParkNode(*parques, nome);
 
 	if (!parqueExiste(*parques, nome)) {
@@ -218,7 +254,7 @@ void iniciaE(char *resposta, parkList *parques, char dataAnt[11],
 		return;
 	}
 
-    if (carroExiste(*parques, matricula)) {
+    if (obtemCarro(*parques, matricula) != NULL){
         printf("%s: invalid vehicle entry.\n", matricula);
         return;
     }
@@ -231,4 +267,118 @@ void iniciaE(char *resposta, parkList *parques, char dataAnt[11],
 	strcpy(horaAnt, hora);
 
 	return;
+}
+
+/*
+O valor a facturar é definido em intervalos de 15 minutos. Dependendo da duração da permanência do veículo no parque, o valor a facturar em cada período varia. 
+O regime de facturação de todos os parques é definido por três valores:
+
+X : o valor por cada 15 minutos na 1ª hora;
+Y : o valor por cada 15 minutos após a 1ª hora;
+Z : o valor máximo diário (24 horas);
+Nos primeiros 4 períodos de 15 minutos é cobrado X por cada período. A partir da 1ª hora é cobrado Y por cada período adicional de 15 minutos. 
+No entanto, se o período de permanência no parque for inferior a 24 horas, então o valor máximo a cobrar não pode ser superior a Z. Note-se que no tarifário temos sempre que Z > Y > X.
+
+Os veículos podem permanecer num parque por mais de 24 horas. Nesse caso, é aplicado o valor máximo diário Z a cada período completo de 24 horas que permanecer no parque. 
+O valor a cobrar pelo período remanescente é calculado de acordo com o definido para um período inferior a 24 horas como descrito no parágrafo anterior.
+
+Suponha um parque cujo tarifário é 0.25 (15 min. na 1ª hora), 0.30 (15 mim. após 1ª hora), 15.00 (máximo por cada 24 horas). 
+Considere um veículo que dá entrada no parque no dia 01-04-2024 08:00 e sai no dia 04-04-2024 10:00. Neste caso, o veiculo permaneceu no parque por 3 períodos de 24 horas e 2 horas adicionais. 
+Logo, o valor a cobrar é definido por 3*15.00+0.25*4+0.30*4. Se o veículo saisse no dia 04-04-2024 23:00, então o valor a cobrar seria 3*15.00+15.00 porque o valor máximo a cobrar no último período está 
+limitado a 15.00.
+*/
+float calculaCusto(float val15, float val15a1h, float valMaxDia, 
+                    char dataE[TAMDATA+1], char horaE[TAMHORA+1], 
+                    int diaS, int mesS, int anoS, int horaIntS, int minutoIntS) {
+    
+    int diaE, mesE, anoE, horaIntE, minutoIntE;
+    int minutos = 0;
+    float custo = 0;
+    converteData(dataE, &diaE, &mesE, &anoE);
+    converteHora(horaE, &horaIntE, &minutoIntE);
+    minutos = calculaMinutos(diaE, mesE, anoE, horaIntE, minutoIntE,
+                   diaS, mesS, anoS, horaIntS, minutoIntS);
+    custo = minutos / 1440 * valMaxDia;
+    minutos = minutos % 1440;
+    if (minutos <= 60) {
+        if (minutos % 15 == 0)
+            custo += minutos / 15 * val15;
+        else
+            custo += (minutos / 15 + 1) * val15;
+    } else {
+        custo += 4 * val15;
+        minutos -= 60;
+        if (minutos % 15 == 0)
+            custo += minutos / 15.0 * val15a1h;
+        else
+            custo += (minutos / 15 + 1) * val15a1h;
+    }
+    if (custo > valMaxDia) {
+        custo = valMaxDia;
+    }
+    return custo;
+}
+
+// Funcao que calcula o numero de dias entre duas datas
+int calculaMinutos(int diaE, int mesE, int anoE, int horaIntE, int minutoIntE,
+				   int diaS, int mesS, int anoS, int horaIntS, int minutoIntS) {
+	long long minutos1 = anoE * 525600 + mesE * 43800 + diaE * 1440 + horaIntE * 60 + minutoIntE;
+	long long minutos2 = anoS * 525600 + mesS * 43800 + diaS * 1440 + horaIntS * 60 + minutoIntS;
+	
+	return minutos2 - minutos1;
+}
+
+
+void iniciaS(char *resposta, parkList *parques, char dataAnt[TAMDATA+1], 
+			char horaAnt[TAMHORA+1]) {
+	char matricula[TAMMATRICULA+1], data[TAMDATA+1], hora[TAMHORA+1];
+	int dia, mes, ano;
+	int horaInt, minutoInt;
+	int horaIntE, minutoIntE;
+	float custo;
+	CarroNode *carroEscolhido = (CarroNode*)malloc(sizeof(CarroNode));
+	parkNode *parkEscolhido = (parkNode*)malloc(sizeof(parkNode));
+	char *nome = processaInputS(resposta, matricula, data, hora);
+	parkEscolhido = obterParkNode(*parques, nome);
+	carroEscolhido = obtemCarro(*parques, matricula);
+	converteData(data, &dia, &mes, &ano);
+	converteHora(hora, &horaInt, &minutoInt);
+	if (!parqueExiste(*parques, nome)) {
+		printf("%s: no such parking.\n", nome);
+		return;
+	}
+
+	if (!matriculaValida(matricula)) {
+		printf("%s: invalid licence plate.\n", matricula);
+		return;
+	}
+
+	if (carroEscolhido == NULL){
+		printf("%s: invalid vehicle exit.\n", matricula);
+		return;
+	}
+
+	if (!dataValida(dia, mes, ano)) {
+		printf("invalid date.\n");
+		return;
+	}
+
+	if (!horaValida(horaInt, minutoInt)) {
+		printf("invalid date.\n");
+		return;
+	}
+	
+	if (dataAnterior(dataAnt, horaAnt, data, hora)) {
+		printf("invalid date.\n");
+		return;
+	}
+
+	converteHora(carroEscolhido->carro.horaEntrada, &horaIntE, &minutoIntE);
+	custo = calculaCusto(parkEscolhido->parque.val15, parkEscolhido->parque.val15a1h, 
+						 parkEscolhido->parque.valMaxDia, carroEscolhido->carro.dataEntrada, 
+						 carroEscolhido->carro.horaEntrada, dia, mes, ano, horaInt, minutoInt);
+	printf("%s %s %02d:%02d %s %02d:%02d %.2f\n", matricula, carroEscolhido->carro.dataEntrada, 
+		   horaIntE, minutoIntE, data, horaInt, minutoInt, custo);
+	removeCarro(&parkEscolhido->parque, matricula);
+	
 }

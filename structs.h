@@ -2,11 +2,14 @@
 #define STRUCTS_H
 
 #define TAMMATRICULA 8
+#define TAMDATA 10
+#define TAMHORA 5
 #define MAX 20
 
 
 typedef struct {
-    char matricula[TAMMATRICULA+1], dataEntrada[11], horaEntrada[6];
+    char matricula[TAMMATRICULA+1], dataEntrada[TAMDATA+1],
+    horaEntrada[TAMHORA+1];
     float custo;
 } Carro;
 
