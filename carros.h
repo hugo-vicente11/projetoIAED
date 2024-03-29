@@ -22,6 +22,7 @@ float calculaCusto(float val15, float val15a1h, float valMaxDia,
 					int diaS, int mesS, int anoS, int horaIntS, int minutoIntS);
 void iniciaS(char *resposta, parkList *parques, char dataAnt[TAMDATA+1], 
 			 char horaAnt[TAMHORA+1]);
-int calculaMinutos(int diaE, int mesE, int anoE, int horaIntE, int minutoIntE,
-				   int diaS, int mesS, int anoS, int horaIntS, int minutoIntS);
+void calculaRecursivaMins(float val15, float val15a1h, float valMaxDia,
+						  long long particoes, float *custo);
+long long calculaMinutos(int ano, int mes, int dia, int hora, int minuto);
 #endif

@@ -5,6 +5,7 @@
 #define TAMDATA 10
 #define TAMHORA 5
 #define MAX 20
+#define HASHSIZE 5003
 
 
 typedef struct {
@@ -44,6 +45,19 @@ typedef struct {
     parkNode *head;
     int tamanho;
 } parkList;
+
+
+typedef struct RegCarro {
+    char *matricula;
+    char tipo; // e - entrada, s - saida
+    char data[TAMDATA+1], hora[TAMHORA+1];
+} RegCarro;
+
+
+typedef struct RegCarroNode {
+    RegCarro regCarro;
+    struct RegCarroNode *next;
+} RegCarroNode;
 
 
 #endif // STRUCTS_H

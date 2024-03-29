@@ -287,45 +287,67 @@ Considere um veículo que dá entrada no parque no dia 01-04-2024 08:00 e sai no
 Logo, o valor a cobrar é definido por 3*15.00+0.25*4+0.30*4. Se o veículo saisse no dia 04-04-2024 23:00, então o valor a cobrar seria 3*15.00+15.00 porque o valor máximo a cobrar no último período está 
 limitado a 15.00.
 */
+// val15 valor por cada 15 minutos na 1ª hora
+// val15a1h valor por cada 15 minutos após a 1ª hora
+// valMaxDia valor máximo diário (24 horas)
 float calculaCusto(float val15, float val15a1h, float valMaxDia, 
                     char dataE[TAMDATA+1], char horaE[TAMHORA+1], 
-                    int diaS, int mesS, int anoS, int horaIntS, int minutoIntS) {
-    
+                    int diaS, int mesS, int anoS, int horaIntS, 
+					int minutoIntS) {
     int diaE, mesE, anoE, horaIntE, minutoIntE;
-    int minutos = 0;
+    long long minutos = 0, particoes = 0;
     float custo = 0;
     converteData(dataE, &diaE, &mesE, &anoE);
     converteHora(horaE, &horaIntE, &minutoIntE);
-    minutos = calculaMinutos(diaE, mesE, anoE, horaIntE, minutoIntE,
-                   diaS, mesS, anoS, horaIntS, minutoIntS);
-    custo = minutos / 1440 * valMaxDia;
-    minutos = minutos % 1440;
-    if (minutos <= 60) {
-        if (minutos % 15 == 0)
-            custo += minutos / 15 * val15;
-        else
-            custo += (minutos / 15 + 1) * val15;
-    } else {
-        custo += 4 * val15;
-        minutos -= 60;
-        if (minutos % 15 == 0)
-            custo += minutos / 15.0 * val15a1h;
-        else
-            custo += (minutos / 15 + 1) * val15a1h;
-    }
-    if (custo > valMaxDia) {
-        custo = valMaxDia;
-    }
+    minutos += calculaMinutos(anoS, mesS, diaS, horaIntS, minutoIntS);
+	minutos -= calculaMinutos(anoE, mesE, diaE, horaIntE, minutoIntE);
+    if (minutos % 15 == 0) {
+        particoes = minutos / 15;
+	}
+    else {
+        particoes = minutos / 15 + 1;
+	}
+	calculaRecursivaMins(val15, val15a1h, valMaxDia, particoes, &custo);
     return custo;
 }
 
+
+void calculaRecursivaMins(float val15, float val15a1h, float valMaxDia,
+						  long long particoes, float *custo) {
+	if (particoes <= 4) {
+		float adicionar = particoes * val15;
+		if (adicionar > valMaxDia){
+			adicionar = valMaxDia;
+		}
+		*custo += adicionar;
+		return;
+	} else if (particoes > 4 && particoes <= 96) {
+		float adicionar = (4 * val15) + ((particoes - 4) * val15a1h);
+		if (adicionar > valMaxDia){
+			adicionar = valMaxDia;
+		}
+		*custo += adicionar;
+		return;
+	} else if (particoes > 96) {
+		*custo += valMaxDia;
+		particoes -= 96;
+		calculaRecursivaMins(val15, val15a1h, valMaxDia, particoes, custo);
+	}
+}
+
+
 // Funcao que calcula o numero de dias entre duas datas
-int calculaMinutos(int diaE, int mesE, int anoE, int horaIntE, int minutoIntE,
-				   int diaS, int mesS, int anoS, int horaIntS, int minutoIntS) {
-	long long minutos1 = anoE * 525600 + mesE * 43800 + diaE * 1440 + horaIntE * 60 + minutoIntE;
-	long long minutos2 = anoS * 525600 + mesS * 43800 + diaS * 1440 + horaIntS * 60 + minutoIntS;
-	
-	return minutos2 - minutos1;
+long long calculaMinutos(int ano, int mes, int dia, int hora, int minuto) {
+    long long total_minutos = 0;
+    int dias_mes[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    total_minutos += ano * 525600;
+    for (int i = 0; i < mes - 1; i++) {
+        total_minutos += 1440 * dias_mes[i];
+    }
+    total_minutos += 1440 * dia;
+    total_minutos += 60 * hora;
+    total_minutos += minuto;
+    return total_minutos;
 }
 
 
