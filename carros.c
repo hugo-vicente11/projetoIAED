@@ -16,7 +16,7 @@ char * processaInputE(char *frase, char matricula[TAMMATRICULA+1],
     } else {
         sscanf(frase, "e %8191[^ ] %8s %s %s", temp, matricula, data, hora);
     }
-    char *nome = (char*)malloc((strlen(temp) + 1) * sizeof(char));
+    char *nome = (char*)malloc((strlen(temp) + 1));
     strcpy(nome, temp);
     return nome;
 }
@@ -31,7 +31,7 @@ char * processaInputS(char *frase, char matricula[TAMMATRICULA+1],
     } else {
         sscanf(frase, "s %8191[^ ] %8s %s %s", temp, matricula, data, hora);
     }
-    char *nome = (char*)malloc((strlen(temp) + 1) * sizeof(char));
+    char *nome = (char*)malloc((strlen(temp) + 1));
     strcpy(nome, temp);
     return nome;
 }

@@ -65,7 +65,7 @@ void iniciaP(char *resposta, parkList *parques) {
 
 
 void adicionaParkNode(parkList *parques, Parque *parque) {
-    parkNode *novo = malloc(sizeof(parkNode));
+    parkNode *novo = (parkNode*)malloc(sizeof(parkNode));
     novo->parque = *parque;
     novo->next = NULL;
     if (parques->head == NULL) {
@@ -109,7 +109,7 @@ void processaInputP(char *frase, Parque *parque) {
                            &parque->capMaxima, &parque->val15, 
                            &parque->val15a1h, &parque->valMaxDia);
     }
-    parque->nome = malloc((strlen(temp) + 1) * sizeof(char));
+    parque->nome = (char*)malloc((strlen(temp) + 1));
     strcpy(parque->nome, temp);
     return;
 }
