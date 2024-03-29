@@ -50,11 +50,7 @@ char avaliaCaracteres(char c1, char c2) {
 
 
 char matriculaValida(char *matricula) {
-	int tamanho = strlen(matricula);
 	int letras = 0, digitos = 0;
-	if (tamanho != TAMMATRICULA)
-		return 0;
-	
 	if (matricula[2] != '-' || matricula[5] != '-')
 		return 0;
 
@@ -199,8 +195,7 @@ CarroNode * obtemCarro(parkList parques, char matricula[TAMMATRICULA+1]) {
 		CarroNode *atualCarro = atual->parque.carros.head;
 		while (atualCarro != NULL) {
 			if (saoIguais(atualCarro->carro.matricula, matricula, 
-						   strlen(atualCarro->carro.matricula), 
-						   TAMMATRICULA))
+						   TAMMATRICULA, TAMMATRICULA))
 				return atualCarro;
 			atualCarro = atualCarro->next;
 		}
