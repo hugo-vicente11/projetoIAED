@@ -28,12 +28,12 @@ RegCarroNode *procura(char *s, RegCarroList hashtab[HASHSIZE]) {
 }
 
 // Install: insere s na hashtab, e usa seperate chaining
-RegCarro *install(RegCarro *regCarro, RegCarroList hashtab[HASHSIZE]) {
+RegCarroNode *install(RegCarro *regCarro, RegCarroList hashtab[HASHSIZE]) {
 	RegCarroNode *np;
 	unsigned hashval;
 
 	if ((np = procura(regCarro->matricula, hashtab)) == NULL) {
-		np = (RegCarroNode *) malloc(sizeof(*np));
+		np = (RegCarroNode *) malloc(sizeof(RegCarroNode));
 		if (np == NULL || (np->regCarro.matricula = strdup(regCarro->matricula)) == NULL)
 			return NULL;
 		hashval = hash(regCarro->matricula);
@@ -47,5 +47,7 @@ RegCarro *install(RegCarro *regCarro, RegCarroList hashtab[HASHSIZE]) {
 	np->regCarro.tipo = regCarro->tipo;
 	strcpy(np->regCarro.data, regCarro->data);
 	strcpy(np->regCarro.hora, regCarro->hora);
-	return &np->regCarro;
+	np->regCarro.nParque = regCarro->nParque;
+	np->regCarro.custo = regCarro->custo;
+	return np;
 }

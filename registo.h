@@ -4,4 +4,5 @@
 
 unsigned hash(char *s);
 RegCarroNode *procura(char *s, RegCarroList hashtab[HASHSIZE]);
+RegCarroNode *install(RegCarro *regCarro, RegCarroList hashtab[HASHSIZE]);
 #endif // REGISTO_H

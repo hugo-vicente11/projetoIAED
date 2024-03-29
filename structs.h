@@ -49,8 +49,10 @@ typedef struct {
 
 typedef struct RegCarro {
     char *matricula;
+    char *nParque;
     char tipo; // e - entrada, s - saida
     char data[TAMDATA+1], hora[TAMHORA+1];
+    float custo;
 } RegCarro;
 
 
