@@ -5,15 +5,18 @@
 #include "parque.h"
 #include "lib.h"
 #include "carros.h"
-
+#include "structs.h"
+#include "registo.h"
 
 int main(void) {
 	char resposta[BUFSIZ], continua = 1;
-    char dataAnt[11] = "00-00-0000";
-    char horaAnt[6] = "00:00";
-    parkList parques;
-    parques.head = NULL;
-    parques.tamanho = 0;
+    char dataAnt[11] = "00-00-0000", horaAnt[6] = "00:00";
+    parkList parques = {NULL, 0};
+    /*RegCarroList hashTable[HASHSIZE];
+    for (int i = 0; i < HASHSIZE; i++) {
+        hashTable[i].head = NULL;
+        hashTable[i].tamanho = 0;
+    }*/
 	while (continua) {
 		fgets(resposta, BUFSIZ, stdin);
         char primeiroChar = resposta[0];

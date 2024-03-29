@@ -3,4 +3,5 @@
 #include "structs.h"
 
 unsigned hash(char *s);
+RegCarroNode *procura(char *s, RegCarroList hashtab[HASHSIZE]);
 #endif // REGISTO_H

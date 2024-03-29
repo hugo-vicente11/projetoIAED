@@ -60,4 +60,9 @@ typedef struct RegCarroNode {
 } RegCarroNode;
 
 
+typedef struct {
+    RegCarroNode *head;
+    int tamanho;
+} RegCarroList;
+
 #endif // STRUCTS_H

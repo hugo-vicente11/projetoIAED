@@ -214,7 +214,7 @@ void iniciaE(char *resposta, parkList *parques, char dataAnt[TAMDATA+1],
 	char *nome = processaInputE(resposta, matricula, data, hora);
 	parkEscolhido = obterParkNode(*parques, nome);
 
-	if (!parqueExiste(*parques, nome)) {
+	if (parkEscolhido == NULL) {
 		printf("%s: no such parking.\n", nome);
 		return;
 	}
@@ -264,27 +264,7 @@ void iniciaE(char *resposta, parkList *parques, char dataAnt[TAMDATA+1],
 	return;
 }
 
-/*
-O valor a facturar é definido em intervalos de 15 minutos. Dependendo da duração da permanência do veículo no parque, o valor a facturar em cada período varia. 
-O regime de facturação de todos os parques é definido por três valores:
 
-X : o valor por cada 15 minutos na 1ª hora;
-Y : o valor por cada 15 minutos após a 1ª hora;
-Z : o valor máximo diário (24 horas);
-Nos primeiros 4 períodos de 15 minutos é cobrado X por cada período. A partir da 1ª hora é cobrado Y por cada período adicional de 15 minutos. 
-No entanto, se o período de permanência no parque for inferior a 24 horas, então o valor máximo a cobrar não pode ser superior a Z. Note-se que no tarifário temos sempre que Z > Y > X.
-
-Os veículos podem permanecer num parque por mais de 24 horas. Nesse caso, é aplicado o valor máximo diário Z a cada período completo de 24 horas que permanecer no parque. 
-O valor a cobrar pelo período remanescente é calculado de acordo com o definido para um período inferior a 24 horas como descrito no parágrafo anterior.
-
-Suponha um parque cujo tarifário é 0.25 (15 min. na 1ª hora), 0.30 (15 mim. após 1ª hora), 15.00 (máximo por cada 24 horas). 
-Considere um veículo que dá entrada no parque no dia 01-04-2024 08:00 e sai no dia 04-04-2024 10:00. Neste caso, o veiculo permaneceu no parque por 3 períodos de 24 horas e 2 horas adicionais. 
-Logo, o valor a cobrar é definido por 3*15.00+0.25*4+0.30*4. Se o veículo saisse no dia 04-04-2024 23:00, então o valor a cobrar seria 3*15.00+15.00 porque o valor máximo a cobrar no último período está 
-limitado a 15.00.
-*/
-// val15 valor por cada 15 minutos na 1ª hora
-// val15a1h valor por cada 15 minutos após a 1ª hora
-// valMaxDia valor máximo diário (24 horas)
 float calculaCusto(float val15, float val15a1h, float valMaxDia, 
                     char dataE[TAMDATA+1], char horaE[TAMHORA+1], 
                     int diaS, int mesS, int anoS, int horaIntS, 
@@ -331,7 +311,7 @@ void calculaRecursivaMins(float val15, float val15a1h, float valMaxDia,
 }
 
 
-// Funcao que calcula o numero de dias entre duas datas
+// Funcao que calcula o numero de minutos entre duas datas
 long long calculaMinutos(int ano, int mes, int dia, int hora, int minuto) {
     long long total_minutos = 0;
     int dias_mes[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -360,7 +340,7 @@ void iniciaS(char *resposta, parkList *parques, char dataAnt[TAMDATA+1],
 	carroEscolhido = obtemCarro(*parques, matricula);
 	converteData(data, &dia, &mes, &ano);
 	converteHora(hora, &horaInt, &minutoInt);
-	if (!parqueExiste(*parques, nome)) {
+	if (parkEscolhido == NULL) {
 		printf("%s: no such parking.\n", nome);
 		return;
 	}

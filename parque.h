@@ -8,7 +8,6 @@ void iniciaP(char *resposta, parkList *parques);
 void adicionaParkNode(parkList *parques, Parque *parque);
 void removeParkNode(parkList *parques, char *nome);
 void listaParques(parkList parques);
-char parqueExiste(parkList parques, char *nome);
 parkNode *obterParkNode(parkList parques, char *nome);
 
 

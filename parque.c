@@ -13,21 +13,6 @@ char custoInvalido(Parque *parque) {
 }
 
 
-char parqueExiste(parkList parques, char *nome) {
-    int tamanho = strlen(nome);
-    parkNode *atual = parques.head;
-    while (atual != NULL) {
-        if (saoIguais(atual->parque.nome, nome, tamanho, 
-            strlen(atual->parque.nome)))
-        {
-            return 1;
-        }
-        atual = atual->next;
-    }
-    return 0;
-}
-
-
 void iniciaP(char *resposta, parkList *parques) {
     if (strlen(resposta) <= 2) {
         listaParques(*parques);
@@ -42,7 +27,7 @@ void iniciaP(char *resposta, parkList *parques) {
     Parque novoParque;
     processaInputP(resposta, &novoParque);
     if (parques->tamanho != 0) {
-        if (parqueExiste(*parques, novoParque.nome)) {
+        if (obterParkNode(*parques, novoParque.nome) != NULL){
             printf("%s: parking already exists.\n",novoParque.nome);
             return;
         }
@@ -128,7 +113,8 @@ void removeParkNode(parkList *parques, char *nome) {
     parkNode *atual = parques->head;
     parkNode *anterior = NULL;
     while (atual != NULL) {
-        if (saoIguais(atual->parque.nome, nome, tamanho, strlen(atual->parque.nome))) {
+        if (saoIguais(atual->parque.nome, nome, tamanho,
+            strlen(atual->parque.nome))) {
             if (anterior == NULL) {
                 parques->head = atual->next;
             } else {
