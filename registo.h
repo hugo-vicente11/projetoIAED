@@ -2,7 +2,9 @@
 #define REGISTO_H
 #include "structs.h"
 
-unsigned hash(char *s);
-RegCarroNode *procura(char *s, RegCarroList hashtab[HASHSIZE]);
-RegCarroNode *install(RegCarro *regCarro, RegCarroList hashtab[HASHSIZE]);
+void iniciaV(char *matricula, RegCarroList registos);
+void adicionaRegistoNode(RegCarroList *registos, RegCarroNode *registo);
+RegCarroNode *obterRegNode(RegCarroList registos, 
+						   char matricula[TAMMATRICULA+1], char *nParque);
+void iniciaF(char *input, RegCarroList *registos);
 #endif // REGISTO_H

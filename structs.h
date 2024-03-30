@@ -48,10 +48,10 @@ typedef struct {
 
 
 typedef struct RegCarro {
-    char *matricula;
+    char matricula[TAMMATRICULA+1];
     char *nParque;
-    char tipo; // e - entrada, s - saida
-    char data[TAMDATA+1], hora[TAMHORA+1];
+    char dataE[TAMDATA+1], horaE[TAMHORA+1], dataS[TAMDATA+1], 
+    horaS[TAMHORA+1];
     float custo;
 } RegCarro;
 
@@ -66,5 +66,11 @@ typedef struct {
     RegCarroNode *head;
     int tamanho;
 } RegCarroList;
+
+
+typedef struct {
+    char data[TAMDATA+1];
+    double custo;
+} Faturacao;
 
 #endif // STRUCTS_H

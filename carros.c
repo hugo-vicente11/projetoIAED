@@ -5,6 +5,7 @@
 #include "lib.h"
 #include <ctype.h>
 #include <string.h>
+#include "registo.h"
 
 
 char * processaInputE(char *frase, char matricula[TAMMATRICULA+1],
@@ -206,7 +207,7 @@ CarroNode * obtemCarro(parkList parques, char matricula[TAMMATRICULA+1]) {
 
 
 void iniciaE(char *resposta, parkList *parques, char dataAnt[TAMDATA+1], 
-			 char horaAnt[TAMHORA+1]) {
+			 char horaAnt[TAMHORA+1], RegCarroList *registos) {
 	char matricula[TAMMATRICULA+1], data[TAMDATA+1], hora[TAMHORA+1];
 	int dia, mes, ano;
 	int horaInt, minutoInt;
@@ -254,9 +255,21 @@ void iniciaE(char *resposta, parkList *parques, char dataAnt[TAMDATA+1],
         return;
     }
 
+	RegCarroNode *novoReg = (RegCarroNode*)malloc(sizeof(RegCarroNode));
+	strcpy(novoReg->regCarro.matricula, matricula);
+	novoReg->regCarro.nParque = malloc((strlen(nome) + 1));
+	strcpy(novoReg->regCarro.nParque, nome);
+	strcpy(novoReg->regCarro.dataE, data);
+	strcpy(novoReg->regCarro.horaE, hora);
+	strcpy(novoReg->regCarro.dataS, "00-00-0000");
+	strcpy(novoReg->regCarro.horaS, "00:00");
+	novoReg->regCarro.custo = 0;
+	novoReg->next = NULL;
+adicionaRegistoNode(registos, novoReg);
 	adicionaCarro(&parkEscolhido->parque, matricula, data, hora);
 
-	printf("%s %d\n", parkEscolhido->parque.nome, parkEscolhido->parque.lugaresDisp);
+	printf("%s %d\n", parkEscolhido->parque.nome,
+		   parkEscolhido->parque.lugaresDisp);
 
 	strcpy(dataAnt, data);
 	strcpy(horaAnt, hora);
@@ -327,7 +340,7 @@ long long calculaMinutos(int ano, int mes, int dia, int hora, int minuto) {
 
 
 void iniciaS(char *resposta, parkList *parques, char dataAnt[TAMDATA+1], 
-			char horaAnt[TAMHORA+1]) {
+			char horaAnt[TAMHORA+1], RegCarroList *registos) {
 	char matricula[TAMMATRICULA+1], data[TAMDATA+1], hora[TAMHORA+1];
 	int dia, mes, ano;
 	int horaInt, minutoInt;
@@ -338,6 +351,7 @@ void iniciaS(char *resposta, parkList *parques, char dataAnt[TAMDATA+1],
 	char *nome = processaInputS(resposta, matricula, data, hora);
 	parkEscolhido = obterParkNode(*parques, nome);
 	carroEscolhido = obtemCarro(*parques, matricula);
+	
 	converteData(data, &dia, &mes, &ano);
 	converteHora(hora, &horaInt, &minutoInt);
 	if (parkEscolhido == NULL) {
@@ -376,6 +390,10 @@ void iniciaS(char *resposta, parkList *parques, char dataAnt[TAMDATA+1],
 						 carroEscolhido->carro.horaEntrada, dia, mes, ano, horaInt, minutoInt);
 	printf("%s %s %02d:%02d %s %02d:%02d %.2f\n", matricula, carroEscolhido->carro.dataEntrada, 
 		   horaIntE, minutoIntE, data, horaInt, minutoInt, custo);
+	RegCarroNode *reg = obterRegNode(*registos, matricula, nome);
+	strcpy(reg->regCarro.dataS, data);
+	strcpy(reg->regCarro.horaS, hora);
+	reg->regCarro.custo = custo;
 	removeCarro(&parkEscolhido->parque, matricula);
 	
 }

@@ -12,15 +12,10 @@ int main(void) {
 	char resposta[BUFSIZ], continua = 1;
     char dataAnt[11] = "00-00-0000", horaAnt[6] = "00:00";
     parkList parques = {NULL, 0};
-    /*RegCarroList hashTable[HASHSIZE];
-    for (int i = 0; i < HASHSIZE; i++) {
-        hashTable[i].head = NULL;
-        hashTable[i].tamanho = 0;
-    }*/
+    RegCarroList registos = {NULL, 0};
 	while (continua) {
 		fgets(resposta, BUFSIZ, stdin);
-        char primeiroChar = resposta[0];
-		switch (primeiroChar) {
+		switch (resposta[0]) {
 			case 'q':
 				// Meter os frees aqui
                 continua = 0;
@@ -31,11 +26,18 @@ int main(void) {
                 break;
 
             case 'e':
-                iniciaE(resposta, &parques, dataAnt, horaAnt);
+                iniciaE(resposta, &parques, dataAnt, horaAnt, &registos);
                 break;
             
             case 's':
-                iniciaS(resposta, &parques, dataAnt, horaAnt);
+                iniciaS(resposta, &parques, dataAnt, horaAnt, &registos);
+                break;
+
+            case 'v':
+                iniciaV(resposta+2, registos);
+                break;
+            case 'f':
+                iniciaF(resposta, &registos);
                 break;
 		}
 	}
