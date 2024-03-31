@@ -59,7 +59,6 @@ int recolheNodesMat(RegCarroList *registos, char matricula[TAMMATRICULA+1],
 		}
 		atual = atual->next;
 	}
-	free(atual);
 	return c;
 }
 
@@ -133,7 +132,6 @@ void iniciaV(char *matricula, RegCarroList registos) {
 			lista[i]->regCarro.dataS, horaIntS, minIntS);
 		}
 	}
-
 }
 
 
