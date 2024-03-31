@@ -121,7 +121,7 @@ char horaValida(int hora, int minuto) {
 }
 
 
-char dataAnterior(char dataAnt[TAMDATA+1], char horaAnt[TAMHORA+1],
+char dataHAnterior(char dataAnt[TAMDATA+1], char horaAnt[TAMHORA+1],
 				  char data[TAMDATA+1], char hora[TAMHORA+1]) {
 	int diaAnt, mesAnt, anoAnt, horaIntAnt, minutoIntAnt;
 	int dia, mes, ano, horaInt, minutoInt;
@@ -145,6 +145,25 @@ char dataAnterior(char dataAnt[TAMDATA+1], char horaAnt[TAMHORA+1],
 						return 1;
 				}
 			}
+		}
+	}
+	return 0;
+}
+
+// Retorna true se a data inserida for anterior a dataAnt
+char dataAnterior(char dataAnt[TAMDATA+1], char data[TAMDATA+1]) {
+	int diaAnt, mesAnt, anoAnt;
+	int dia, mes, ano;
+	converteData(dataAnt, &diaAnt, &mesAnt, &anoAnt);
+	converteData(data, &dia, &mes, &ano);
+	if (anoAnt > ano)
+		return 1;
+	else if (anoAnt == ano) {
+		if (mesAnt > mes)
+			return 1;
+		else if (mesAnt == mes) {
+			if (diaAnt > dia)
+				return 1;
 		}
 	}
 	return 0;
@@ -245,7 +264,7 @@ void iniciaE(char *resposta, parkList *parques, char dataAnt[TAMDATA+1],
 	}
 
 	// Falta verificar se a data e a hora inserida e anterior a data e hora atual
-	if (dataAnterior(dataAnt, horaAnt, data, hora)) {
+	if (dataHAnterior(dataAnt, horaAnt, data, hora)) {
 		printf("invalid date.\n");
 		return;
 	}
@@ -379,7 +398,7 @@ void iniciaS(char *resposta, parkList *parques, char dataAnt[TAMDATA+1],
 		return;
 	}
 	
-	if (dataAnterior(dataAnt, horaAnt, data, hora)) {
+	if (dataHAnterior(dataAnt, horaAnt, data, hora)) {
 		printf("invalid date.\n");
 		return;
 	}

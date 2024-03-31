@@ -37,7 +37,7 @@ int main(void) {
                 iniciaV(resposta+2, registos);
                 break;
             case 'f':
-                iniciaF(resposta, &registos);
+                iniciaF(resposta, &registos, &parques, dataAnt);
                 break;
 		}
 	}

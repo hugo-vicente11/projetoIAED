@@ -11,8 +11,9 @@ void converteData(char *data, int *dia, int *mes, int *ano);
 void converteHora(char *hora, int *horaInt, int *minutoInt);
 char dataValida(int dia, int mes, int ano);
 char horaValida(int hora, int minuto);
-char dataAnterior(char dataAnt[TAMDATA+1], char horaAnt[TAMHORA+1], 
+char dataHAnterior(char dataAnt[TAMDATA+1], char horaAnt[TAMHORA+1], 
 				  char data[TAMDATA+1], char hora[TAMHORA+1]);
+char dataAnterior(char dataAnt[TAMDATA+1], char data[TAMDATA+1]);
 char * processaInputE(char *frase, char matricula[TAMMATRICULA+1],
 				   char data[TAMDATA+1], char hora[TAMHORA+1]);
 char * processaInputS(char *frase, char matricula[TAMMATRICULA+1],

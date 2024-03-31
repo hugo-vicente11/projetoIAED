@@ -64,19 +64,54 @@ int recolheNodesMat(RegCarroList *registos, char matricula[TAMMATRICULA+1],
 }
 
 
-void organizaNom(RegCarroNode *lista[], int tamanho) {
-	int i, j;
-	RegCarroNode *temp;
-	for (i = 0; i < tamanho; i++) {
-		for (j = i+1; j < tamanho; j++) {
-			if (strcmp(lista[i]->regCarro.nParque, lista[j]->regCarro.nParque) 
-				> 0) {
-				temp = lista[i];
-				lista[i] = lista[j];
-				lista[j] = temp;
-			}
-		}
-	}
+void merge(RegCarroNode *lista[], int inicio, int meio, int fim) {
+    int i, j, k;
+    int n1 = meio - inicio + 1;
+    int n2 = fim - meio;
+
+    RegCarroNode *L[n1], *R[n2];
+
+    for (i = 0; i < n1; i++)
+        L[i] = lista[inicio + i];
+    for (j = 0; j < n2; j++)
+        R[j] = lista[meio + 1 + j];
+
+    i = 0;
+    j = 0;
+    k = inicio;
+    while (i < n1 && j < n2) {
+        if (strcmp(L[i]->regCarro.nParque, R[j]->regCarro.nParque) <= 0) {
+            lista[k] = L[i];
+            i++;
+        } else {
+            lista[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        lista[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        lista[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+void organizaNom(RegCarroNode *lista[], int inicio, int fim) {
+    if (inicio < fim) {
+        int meio = inicio + (fim - inicio) / 2;
+
+        organizaNom(lista, inicio, meio);
+        organizaNom(lista, meio + 1, fim);
+
+        merge(lista, inicio, meio, fim);
+    }
 }
 
 
@@ -103,6 +138,30 @@ void organizaDataS(RegCarroNode *lista[], int tamanho) {
 }
 
 
+void organizaDataE(RegCarroNode *lista[], int tamanho) {
+	int i, j, anoI, mesI, diaI, horaI, minI, anoJ, mesJ, diaJ, horaJ, minJ;
+	RegCarroNode *temp;
+	for (i = 0; i < tamanho; i++) {
+		converteData(lista[i]->regCarro.dataE, &anoI, &mesI, &diaI);
+		converteHora(lista[i]->regCarro.horaE, &horaI, &minI);
+		for (j = i+1; j < tamanho; j++) {
+			converteData(lista[j]->regCarro.dataE, &anoJ, &mesJ, &diaJ);
+			converteHora(lista[j]->regCarro.horaE, &horaJ, &minJ);
+			if (anoI > anoJ || (anoI == anoJ && mesI > mesJ) || 
+				(anoI == anoJ && mesI == mesJ && diaI > diaJ) ||
+				(anoI == anoJ && mesI == mesJ && diaI == diaJ && horaI > horaJ) ||
+				(anoI == anoJ && mesI == mesJ && diaI == diaJ && 
+				horaI == horaJ && minI > minJ)) {
+				temp = lista[i];
+				lista[i] = lista[j];
+				lista[j] = temp;
+			}
+		}
+	}
+
+}
+
+
 void iniciaV(char *matricula, RegCarroList registos) {
 	int indice;
 	RegCarroNode *lista[registos.tamanho];
@@ -117,14 +176,12 @@ void iniciaV(char *matricula, RegCarroList registos) {
 		return;
 	}
 
-	organizaNom(lista, indice);
+	organizaNom(lista, 0, indice-1);
 	for (int i = 0; i < indice; i++) {
 		int horaIntE, minIntE, horaIntS, minIntS;
 		converteHora(lista[i]->regCarro.horaE, &horaIntE, &minIntE);
 		converteHora(lista[i]->regCarro.horaS, &horaIntS, &minIntS);
 		if (strcmp(lista[i]->regCarro.dataS, "00-00-0000") == 0) {
-			strcpy(lista[i]->regCarro.dataS, "");
-			strcpy(lista[i]->regCarro.horaS, "");
 			printf("%s %s %s\n", lista[i]->regCarro.nParque,
 			 	   lista[i]->regCarro.dataE, lista[i]->regCarro.horaE);
 		} else {
@@ -184,13 +241,23 @@ int recolheNodesNomData(RegCarroList *registos, char *nParque,
 }
 
 
-void iniciaF(char *input, RegCarroList *registos) {
+void iniciaF(char *input, RegCarroList *registos, parkList* parques,
+			 char dataAnt[TAMDATA+1]) {
 	char temp[BUFSIZ], data[TAMDATA+1];
 	int horaIntS, minIntS, indice;
+	int ano, mes, dia;
 	RegCarroNode *lista[registos->tamanho];
 	extraiArgsF(input, temp, data);
 	char *nParque = (char*)malloc(strlen(temp)+1);
 	strcpy(nParque, temp);
+	converteData(data, &dia, &mes, &ano);
+
+	if (obterParkNode(*parques, nParque) == NULL) {
+		printf("%s: no such parking.\n", nParque);
+		free(nParque);
+		return;
+	}
+
 	if (strcmp(data, "") == 0) {
 		Faturacao faturacao[registos->tamanho];
 		int numDias = 0;
@@ -215,6 +282,12 @@ void iniciaF(char *input, RegCarroList *registos) {
 			printf("%s %.2f\n", faturacao[i].data, faturacao[i].custo);
 		}
 }	 else {
+
+		if (!dataValida(dia, mes, ano) || !dataAnterior(dataAnt, data)) {
+		printf("invalid date.\n");
+		free(nParque);
+		return;
+		}
 		indice = recolheNodesNomData(registos, nParque, data, lista);
 		organizaDataS(lista, indice);
 		for (int i = 0; i < indice; i++) {
