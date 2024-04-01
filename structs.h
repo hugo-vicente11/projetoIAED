@@ -1,6 +1,6 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
-
+#include <stdio.h>
 #define TAMMATRICULA 8
 #define TAMDATA 10
 #define TAMHORA 5

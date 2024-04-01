@@ -7,37 +7,65 @@
 #include <string.h>
 #include "registo.h"
 
-
-char * processaInputE(char *frase, char matricula[TAMMATRICULA+1],
-				   char data[TAMDATA+1], char hora[TAMHORA+1]) {
-    char temp[BUFSIZ];
-
+/**
+ * @brief Processa a entrada do usuário para o comando 'e'.
+ * 
+ * Esta função lê a frase de entrada do usuário, extrai a matrícula do carro, 
+ * a data e a hora, e retorna o nome do parque.
+ * 
+ * @param frase Ponteiro para a frase de entrada do usuário.
+ * @param matricula Array de caracteres onde a matrícula do carro é guardada.
+ * @param data Array de caracteres onde a data será armazenada.
+ * @param hora Array de caracteres onde a hora será armazenada.
+ * @return Ponteiro para o nome do parque.
+ */
+void processaInputE(char *frase, char temp[BUFSIZ],
+ char matricula[TAMMATRICULA+1], char data[TAMDATA+1], char hora[TAMHORA+1]) {
     if (temAspas(frase)) {
-        sscanf(frase, "e \"%8191[^\"]\" %8s %s %s", temp, matricula, data, hora);
+        sscanf(frase, "e \"%8191[^\"]\" %8s %s %s", temp, matricula, data,
+			   hora);
     } else {
         sscanf(frase, "e %8191[^ ] %8s %s %s", temp, matricula, data, hora);
     }
-    char *nome = (char*)malloc((strlen(temp) + 1));
-    strcpy(nome, temp);
-    return nome;
+	return;
 }
 
 
-char * processaInputS(char *frase, char matricula[TAMMATRICULA+1],
-				   char data[TAMDATA+1], char hora[TAMHORA+1]) {
-    char temp[BUFSIZ];
-
-    if (temAspas(frase)) {
-        sscanf(frase, "s \"%8191[^\"]\" %8s %s %s", temp, matricula, data, hora);
+/**
+ * @brief Processa a entrada do usuário para o comando 's'.
+ * 
+ * Esta função lê a frase de entrada do usuário, extrai a matrícula do carro, 
+ * a data e a hora, e retorna o nome do parque.
+ * 
+ * @param frase Ponteiro para a frase de entrada do usuário.
+ * @param matricula Array de caracteres onde a matrícula do carro é guardada.
+ * @param data Array de caracteres onde a data será armazenada.
+ * @param hora Array de caracteres onde a hora será armazenada.
+ * @return Ponteiro para o nome do parque.
+ */
+void processaInputS(char *frase, char temp[BUFSIZ],
+					  char matricula[TAMMATRICULA+1],char data[TAMDATA+1],
+					char hora[TAMHORA+1]) {
+	if (temAspas(frase)) {
+        sscanf(frase, "s \"%8191[^\"]\" %8s %s %s", temp, matricula, data,
+			   hora);
     } else {
         sscanf(frase, "s %8191[^ ] %8s %s %s", temp, matricula, data, hora);
     }
-    char *nome = (char*)malloc((strlen(temp) + 1));
-    strcpy(nome, temp);
-    return nome;
+    return;
 }
 	
 
+/**
+ * @brief Avalia se os caracteres são letras ou números.
+ * 
+ * Esta função recebe dois caracteres e retorna 1 se ambos são letras,
+ * 2 se ambos são números, e 0 se são inválidos.
+ * 
+ * @param c1 Primeiro caractere para avaliação.
+ * @param c2 Segundo caractere para avaliação.
+ * @return Retorna 1 para letras, 2 para números e 0 para inválido.
+ */
 char avaliaCaracteres(char c1, char c2) {
 	// Retorna 1 para letras, 2 para numeros e 0 para invalido
 	if ((c1 >= 'A' && c1 <= 'Z') &&
@@ -50,6 +78,15 @@ char avaliaCaracteres(char c1, char c2) {
 }
 
 
+/**
+ * @brief Verifica se uma matrícula é válida.
+ * 
+ * Esta função verifica se a matrícula fornecida segue o formato correto,
+ * que é LL-NN-LL ou NN-LL-NN, onde L é uma letra e N é um número.
+ * 
+ * @param matricula Ponteiro para a matrícula a ser verificada.
+ * @return Retorna 1 se a matrícula for válida, 0 caso contrário.
+ */
 char matriculaValida(char *matricula) {
 	int letras = 0, digitos = 0;
 	if (matricula[2] != '-' || matricula[5] != '-')
@@ -71,6 +108,17 @@ char matriculaValida(char *matricula) {
 }
 
 
+/**
+ * @brief Converte uma data de string para inteiros.
+ * 
+ * Esta função recebe uma data no formato DD-MM-AAAA como string e 
+ * converte para inteiros separados para dia, mês e ano.
+ * 
+ * @param data Ponteiro para a data em formato de string.
+ * @param dia Ponteiro para o dia convertido.
+ * @param mes Ponteiro para o mês convertido.
+ * @param ano Ponteiro para o ano convertido.
+ */
 void converteData(char *data, int *dia, int *mes, int *ano) {
 	*dia = (data[0] - '0') * 10 + (data[1] - '0');
 	*mes = (data[3] - '0') * 10 + (data[4] - '0');
@@ -80,6 +128,16 @@ void converteData(char *data, int *dia, int *mes, int *ano) {
 }
 
 
+/**
+ * @brief Converte uma hora de string para inteiros.
+ * 
+ * Esta função recebe uma hora no formato HH:MM como string e 
+ * converte para inteiros separados para hora e minuto.
+ * 
+ * @param hora Ponteiro para a hora em formato de string.
+ * @param horaInt Ponteiro para a hora convertida.
+ * @param minutoInt Ponteiro para o minuto convertido.
+ */
 void converteHora(char *hora, int *horaInt, int *minutoInt) {
 	if (strlen(hora) == 5) {
 		*horaInt = (hora[0] - '0') * 10 + (hora[1] - '0');
@@ -91,6 +149,16 @@ void converteHora(char *hora, int *horaInt, int *minutoInt) {
 }
 
 
+/**
+ * @brief Verifica se uma data é válida.
+ * 
+ * Esta função verifica se o dia, mês e ano fornecidos formam uma data válida.
+ * 
+ * @param dia Dia a ser verificado.
+ * @param mes Mês a ser verificado.
+ * @param ano Ano a ser verificado.
+ * @return Retorna 1 se a data for válida, 0 caso contrário.
+ */
 char dataValida(int dia, int mes, int ano) {
 	if (dia < 1 || ano  < 0 || mes < 1 || mes > 12)
 		return 0;
@@ -114,6 +182,15 @@ char dataValida(int dia, int mes, int ano) {
 }
 
 
+/**
+ * @brief Verifica se uma hora é válida.
+ * 
+ * Esta função verifica se a hora e o minuto fornecidos formam uma hora válida.
+ * 
+ * @param hora Hora a ser verificada.
+ * @param minuto Minuto a ser verificado.
+ * @return Retorna 1 se a hora for válida, 0 caso contrário.
+ */
 char horaValida(int hora, int minuto) {
 	if (hora < 0 || hora > 23 || minuto < 0 || minuto > 59)
 		return 0;
@@ -121,6 +198,18 @@ char horaValida(int hora, int minuto) {
 }
 
 
+/**
+ * @brief Verifica se uma data e hora são anteriores a outra.
+ * 
+ * Esta função recebe duas datas e horas e verifica se a primeira é anterior
+ * à segunda. As datas e horas são fornecidas como strings.
+ * 
+ * @param dataAnt Data anterior a ser verificada.
+ * @param horaAnt Hora anterior a ser verificada.
+ * @param data Data a ser comparada.
+ * @param hora Hora a ser comparada.
+ * @return Retorna 1 se a data e hora ANT forem anteriores, 0 caso contrário.
+ */
 char dataHAnterior(char dataAnt[TAMDATA+1], char horaAnt[TAMHORA+1],
 				  char data[TAMDATA+1], char hora[TAMHORA+1]) {
 	int diaAnt, mesAnt, anoAnt, horaIntAnt, minutoIntAnt;
@@ -150,7 +239,17 @@ char dataHAnterior(char dataAnt[TAMDATA+1], char horaAnt[TAMHORA+1],
 	return 0;
 }
 
-// Retorna true se a data inserida for anterior a dataAnt
+
+/**
+ * @brief Verifica se uma data é anterior a outra.
+ * 
+ * Esta função recebe duas datas como strings e verifica se a primeira é 
+ * anterior à segunda.
+ * 
+ * @param dataAnt Data anterior a ser verificada.
+ * @param data Data a ser comparada.
+ * @return Retorna 1 se a data anterior for anterior, 0 caso contrário.
+ */
 char dataAnterior(char dataAnt[TAMDATA+1], char data[TAMDATA+1]) {
 	int diaAnt, mesAnt, anoAnt;
 	int dia, mes, ano;
@@ -170,7 +269,17 @@ char dataAnterior(char dataAnt[TAMDATA+1], char data[TAMDATA+1]) {
 }
 
 
-// Adiciona CarroNode a CarroList de um parque
+/**
+ * @brief Adiciona um carro ao parque.
+ * 
+ * Esta função cria um novo carro com a matrícula, data e hora fornecidas, 
+ * e adiciona-o à lista de carros do parque.
+ * 
+ * @param parque Ponteiro para o parque onde o carro será adicionado.
+ * @param matricula Matrícula do carro a ser adicionado.
+ * @param data Data de entrada do carro.
+ * @param hora Hora de entrada do carro.
+ */
 void adicionaCarro(Parque *parque, char matricula[TAMMATRICULA+1], 
 				   char data[TAMDATA+1], char hora[TAMHORA+1]) {
 	CarroNode *novoCarro = (CarroNode*)malloc(sizeof(CarroNode));
@@ -184,6 +293,15 @@ void adicionaCarro(Parque *parque, char matricula[TAMMATRICULA+1],
 	return;
 }
 
+
+/**
+ * @brief Remove um carro do parque.
+ * 
+ * Esta função remove um carro do parque com base na matrícula fornecida.
+ * 
+ * @param parque Ponteiro para o parque de onde o carro será removido.
+ * @param matricula Matrícula do carro a ser removido.
+ */
 void removeCarro(Parque *parque, char matricula[TAMMATRICULA+1]) {
 	CarroNode *atual = parque->carros.head;
 	CarroNode *anterior = NULL;
@@ -208,7 +326,16 @@ void removeCarro(Parque *parque, char matricula[TAMMATRICULA+1]) {
 }
 
 
-// Funcao que verifica se um carro com a matricula inserida ja existe em um parque
+/**
+ * @brief Obtém um carro de um parque com base na matrícula.
+ * 
+ * Esta função percorre a lista de parques e seus carros para encontrar
+ * um carro com a matrícula fornecida.
+ * 
+ * @param parques Lista de parques a serem pesquisados.
+ * @param matricula Matrícula do carro a ser encontrado.
+ * @return Retorna um ponteiro para o carro se encontrado, NULL caso contrário.
+ */
 CarroNode * obtemCarro(parkList parques, char matricula[TAMMATRICULA+1]) {
 	parkNode *atual = parques.head;
 	while (atual != NULL) {
@@ -225,14 +352,27 @@ CarroNode * obtemCarro(parkList parques, char matricula[TAMMATRICULA+1]) {
 }
 
 
+/**
+ * @brief Processa a entrada de um carro em um parque.
+ * 
+ * Esta função recebe a resposta do usuário, a lista de parques, a data e hora 
+ * anteriores e a lista de registos. Processa a entrada de um carro no parque 
+ * escolhido, atualizando as informações necessárias.
+ * 
+ * @param resposta Resposta do usuário.
+ * @param parques Lista de parques.
+ * @param dataAnt Data anterior.
+ * @param horaAnt Hora anterior.
+ * @param registos Lista de registos de carros.
+ */
 void iniciaE(char *resposta, parkList *parques, char dataAnt[TAMDATA+1], 
 			 char horaAnt[TAMHORA+1], RegCarroList *registos) {
 	char matricula[TAMMATRICULA+1], data[TAMDATA+1], hora[TAMHORA+1];
+	char nome[BUFSIZ];
 	int dia, mes, ano;
 	int horaInt, minutoInt;
-	parkNode *parkEscolhido = (parkNode*)malloc(sizeof(parkNode));
-	char *nome = processaInputE(resposta, matricula, data, hora);
-	parkEscolhido = obterParkNode(*parques, nome);
+	processaInputE(resposta, nome, matricula, data, hora);
+	parkNode *parkEscolhido = obterParkNode(*parques, nome);
 
 	if (parkEscolhido == NULL) {
 		printf("%s: no such parking.\n", nome);
@@ -263,7 +403,6 @@ void iniciaE(char *resposta, parkList *parques, char dataAnt[TAMDATA+1],
 		return;
 	}
 
-	// Falta verificar se a data e a hora inserida e anterior a data e hora atual
 	if (dataHAnterior(dataAnt, horaAnt, data, hora)) {
 		printf("invalid date.\n");
 		return;
@@ -284,7 +423,7 @@ void iniciaE(char *resposta, parkList *parques, char dataAnt[TAMDATA+1],
 	strcpy(novoReg->regCarro.horaS, "00:00");
 	novoReg->regCarro.custo = 0;
 	novoReg->next = NULL;
-adicionaRegistoNode(registos, novoReg);
+	adicionaRegistoNode(registos, novoReg);
 	adicionaCarro(&parkEscolhido->parque, matricula, data, hora);
 
 	printf("%s %d\n", parkEscolhido->parque.nome,
@@ -297,6 +436,24 @@ adicionaRegistoNode(registos, novoReg);
 }
 
 
+/**
+ * @brief Calcula o custo de estacionamento de um carro.
+ * 
+ * Esta função calcula o custo com base na data e hora de entrada e saída do 
+ * carro. O custo é calculado em blocos de 15 minutos.
+ * 
+ * @param val15 Custo para os primeiros 15 minutos.
+ * @param val15a1h Custo para os próximos 45 minutos.
+ * @param valMaxDia Custo máximo por dia.
+ * @param dataE Data de entrada do carro.
+ * @param horaE Hora de entrada do carro.
+ * @param diaS Dia de saída do carro.
+ * @param mesS Mês de saída do carro.
+ * @param anoS Ano de saída do carro.
+ * @param horaIntS Hora de saída do carro.
+ * @param minutoIntS Minuto de saída do carro.
+ * @return Retorna o custo calculado.
+ */
 float calculaCusto(float val15, float val15a1h, float valMaxDia, 
                     char dataE[TAMDATA+1], char horaE[TAMHORA+1], 
                     int diaS, int mesS, int anoS, int horaIntS, 
@@ -319,6 +476,19 @@ float calculaCusto(float val15, float val15a1h, float valMaxDia,
 }
 
 
+/**
+ * @brief Calcula o custo do estacionamento de forma recursiva.
+ * 
+ * Esta função calcula o custo do estacionamento com base no número de 
+ * partições de 15 minutos. O custo é calculado de forma recursiva para 
+ * cada dia de estacionamento.
+ * 
+ * @param val15 Custo para os primeiros 15 minutos.
+ * @param val15a1h Custo para os próximos 45 minutos.
+ * @param valMaxDia Custo máximo por dia.
+ * @param particoes Número de partições de 15 minutos.
+ * @param custo Ponteiro para o custo total acumulado.
+ */
 void calculaRecursivaMins(float val15, float val15a1h, float valMaxDia,
 						  long long particoes, float *custo) {
 	if (particoes <= 4) {
@@ -343,7 +513,19 @@ void calculaRecursivaMins(float val15, float val15a1h, float valMaxDia,
 }
 
 
-// Funcao que calcula o numero de minutos entre duas datas
+/**
+ * @brief Calcula o total de minutos desde o início do tempo.
+ * 
+ * Esta função calcula o total de minutos desde o início do tempo (assumindo 
+ * o ano 0) até a data e hora fornecidas.
+ * 
+ * @param ano Ano da data.
+ * @param mes Mês da data.
+ * @param dia Dia da data.
+ * @param hora Hora do dia.
+ * @param minuto Minuto da hora.
+ * @return Retorna o total de minutos calculado.
+ */
 long long calculaMinutos(int ano, int mes, int dia, int hora, int minuto) {
     long long total_minutos = 0;
     int dias_mes[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -358,16 +540,32 @@ long long calculaMinutos(int ano, int mes, int dia, int hora, int minuto) {
 }
 
 
+/**
+ * @brief Inicia o processo de saída de um carro de um parque.
+ * 
+ * Esta função processa a saída de um carro de um parque. Ela verifica a 
+ * validade da matrícula, data e hora, calcula o custo do estacionamento, 
+ * atualiza os registos e remove o carro do parque.
+ * 
+ * @param resposta Resposta do usuário.
+ * @param parques Lista de parques.
+ * @param dataAnt Data anterior.
+ * @param horaAnt Hora anterior.
+ * @param registos Lista de registos de carros.
+ * @param dataAntS Data anterior de saída.
+ */
 void iniciaS(char *resposta, parkList *parques, char dataAnt[TAMDATA+1], 
-			char horaAnt[TAMHORA+1], RegCarroList *registos) {
+			char horaAnt[TAMHORA+1], RegCarroList *registos, 
+			char dataAntS[TAMDATA+1]) {
 	char matricula[TAMMATRICULA+1], data[TAMDATA+1], hora[TAMHORA+1];
+	char nome[BUFSIZ];
 	int dia, mes, ano;
 	int horaInt, minutoInt;
 	int horaIntE, minutoIntE;
 	float custo;
-	CarroNode *carroEscolhido = (CarroNode*)malloc(sizeof(CarroNode));
-	parkNode *parkEscolhido = (parkNode*)malloc(sizeof(parkNode));
-	char *nome = processaInputS(resposta, matricula, data, hora);
+	CarroNode *carroEscolhido;
+	parkNode *parkEscolhido;
+	processaInputS(resposta, nome, matricula, data, hora);
 	parkEscolhido = obterParkNode(*parques, nome);
 	carroEscolhido = obtemCarro(*parques, matricula);
 	
@@ -404,15 +602,19 @@ void iniciaS(char *resposta, parkList *parques, char dataAnt[TAMDATA+1],
 	}
 
 	converteHora(carroEscolhido->carro.horaEntrada, &horaIntE, &minutoIntE);
-	custo = calculaCusto(parkEscolhido->parque.val15, parkEscolhido->parque.val15a1h, 
-						 parkEscolhido->parque.valMaxDia, carroEscolhido->carro.dataEntrada, 
-						 carroEscolhido->carro.horaEntrada, dia, mes, ano, horaInt, minutoInt);
-	printf("%s %s %02d:%02d %s %02d:%02d %.2f\n", matricula, carroEscolhido->carro.dataEntrada, 
+	custo = calculaCusto(parkEscolhido->parque.val15, 
+						 parkEscolhido->parque.val15a1h, 
+						 parkEscolhido->parque.valMaxDia,
+						 carroEscolhido->carro.dataEntrada, 
+						 carroEscolhido->carro.horaEntrada, dia, mes, ano,
+						 horaInt, minutoInt);
+	printf("%s %s %02d:%02d %s %02d:%02d %.2f\n", matricula, 
+		   carroEscolhido->carro.dataEntrada, 
 		   horaIntE, minutoIntE, data, horaInt, minutoInt, custo);
 	RegCarroNode *reg = obterRegNode(*registos, matricula, nome);
 	strcpy(reg->regCarro.dataS, data);
+	strcpy(dataAntS, data);
 	strcpy(reg->regCarro.horaS, hora);
 	reg->regCarro.custo = custo;
 	removeCarro(&parkEscolhido->parque, matricula);
-	
 }
