@@ -1,95 +1,65 @@
-# iaed24 - project 
+# 🚗 Parking Management System (IAED Project)
 
+This repository contains a parking management system implemented in C, designed as part of the **IAED 2024** coursework. The goal of this project was to develop a memory-efficient, modular, and standards-compliant command-line tool for registering, managing, and calculating fees for cars entering and exiting multiple parking lots.
 
-Este repositório git pertence a ist1109389 e destina-se ao project de iaed24.
+## 📌 Project Highlights
 
+- Modular C architecture (split across `project.c`, `parque.c`, `carros.c`, `registo.c`, `lib.c`)
+- Supports commands to:
+  - Create and list parking lots
+  - Register vehicle entries and exits
+  - Validate vehicle data (license plate, date, time)
+  - Calculate fees with tiered logic
+  - Generate revenue reports
+- Developed according to strict academic guidelines, including:
+  - `gcc -Wall -Wextra -Werror -Wno-unused-result` compliance
+  - Memory safety (`valgrind`, `fsanitize`, `cppcheck` tested)
+  - Consistent Doxygen-style documentation
 
-O enunciado do projecto está disponível em [enunciado.md](enunciado.md).
+## 🛠️ Compilation & Execution
 
+To compile the project:
 
-Os alunos devem submeter aqui a sua solução para o project que será avaliada automaticamente.
-
-
-O resultado da avaliação do projecto ficará disponível no [README](https://gitlab.rnl.tecnico.ulisboa.pt/iaed24/feedback/project/ist1109389/-/tree/master/README.md) do repositório de feedback após cada submissão de código.
-
-
-## Data de entrega: 01 de abril 2024, às 19h59
-
-
-O desempenho global dos alunos no project pode ser consultado no [_dashboard_](https://gitlab.rnl.tecnico.ulisboa.pt/iaed24/iaed24/-/tree/master/dashboard/projects/project.md) do projecto, presente no repositório global de iaed24.
-
-
-Informações detalhadas sobre depuração de programas estão disponíveis em [debugging.md](debugging.md).
-
-
-Outras guidelines podem ser encontradas em [guidelines.md](guidelines.md) e mais informações detalhadas sobre os critérios de correcção podem ser encontradas em [criterios.md](criterios.md).
-
-
-
-- **Notas importantes:**
-
-
-  - [+Os alunos têm de esperar 10 minuto(s) entre submissões+]. Desta forma, têm de esperar 10 minuto(s) para resubmeter um novo programa. Caso contrário a submissão do aluno não será avaliada.
-
-
-  - [-Os alunos não podem alterar o ficheiro .gitlab-ci.yml presente no repositorio. A alteração deste ficheiro fará com que o aluno fique sem acesso a este repositório, não existirão excepções. Desta forma o aluno será avaliado com 0 valores nesta componente de avaliação-]
-
-
-
-- Processo de compilação usando o gcc (versão 12.3.0) :
-
-
-```
+```bash
 gcc -O3 -Wall -Wextra -Werror -Wno-unused-result -o proj1 *.c
 ```
 
-- Após compilar o seu projeto, para correr os testes públicos, deve descompactar e entrar na directoria dos testes:
+Run a specific test:
 
-
-```
-unzip public-tests.zip
-```
-
-
-
-
-```
-cd public-tests
+```bash
+./proj1 < tests/test01.in
 ```
 
+Compare with expected output:
 
-- Para correr todos os testes públicos através da Makefile disponibilizada, deve correr o seguinte comando dentro da directoria public-tests:
-
-
-```
-make
+```bash
+diff myoutput.out tests/test01.out
 ```
 
+## ✅ Sample Commands
 
-- Resultados de avaliação mais comuns para cada teste de avaliação:
+- `p "Parque Centro" 100 0.50 1.00 15.00` — Create a parking lot  
+- `e "Parque Centro" AA-00-BB 01-01-2024 08:00` — Register car entry  
+- `s "Parque Centro" AA-00-BB 01-01-2024 09:45` — Register car exit and calculate fee  
+- `v AA-00-BB` — View all parkings a car has used  
+- `f "Parque Centro"` — View total revenue per day  
 
+## 🧠 Learning Outcomes
 
-  - _Accepted_ : O resultado do programa é igual ao esperado.
+- Efficient linked list usage for dynamic memory operations  
+- Defensive programming and input validation  
+- Structuring C code for readability and modularity  
+- Experience with debugging tools and performance analyzers  
 
+## 🧪 Tools Used
 
-  - _Wrong Answer_ : O resultado do programa é diferente do esperado.
+- GCC 12.3.0  
+- Valgrind  
+- cppcheck  
+- icdiff  
+- Make
 
+## 📝 Notes
 
-  - _Presentation Error_ : O resultado do programa difere do esperado em espaços em branco ou linhas em branco.
-
-
-  - _Compile Time Error_ : Ocorreu um erro de compilação durante a compilação do programa.
-
-
-  - _Time Limit Exceeded_ : O tempo de execução do programa programa excedeu o tempo permitido.
-
-
-  - _Memory Limit Exceeded_ : A memória de execução do programa excedeu a memória permitida.
-
-
-  - _Output Limit Exceeded_ : O output de execução do programa excedeu o espaço permitido.
-
-
-  - Outros : Ocorreu um erro durante a execução do programa que levou à paragem inesperada do mesmo.
-
-
+- This project follows strict submission guidelines and was evaluated via an automatic testing system.  
+- Refer to `debugging.md` and `guidelines.md` for insights into code quality, memory safety, and testing workflow.
